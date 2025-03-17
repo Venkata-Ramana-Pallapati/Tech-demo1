@@ -120,7 +120,7 @@ const TimeseriesPredictionChart: React.FC = () => {
       
     
 
-      const response = await fetch(`${API_BASE_URL}/predict/`, {
+      const response = await fetch(`http://52.224.82.95:8000/predict/`, {
         method: "POST",
         body: formData,
       });
