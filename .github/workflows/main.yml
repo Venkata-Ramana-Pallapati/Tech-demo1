@@ -72,9 +72,9 @@ jobs:
           export BACKEND_IP=$(kubectl get svc backend-ramana -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           echo "Backend IP is $BACKEND_IP"
           echo "VITE_BACKEND_URL=http://${BACKEND_IP}:8000" > Frontend/.env
-      - name : apply kubernets for fronetnd
+      - name: Apply Kubernetes Manifests
         run: |
-          cd  manifests
+          cd manifests
           kubectl apply -f frontend-deployment.yaml
           kubectl apply -f frontend-service.yaml
       - name: Rollback on Failure
