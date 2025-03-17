@@ -65,13 +65,6 @@ jobs:
           kubectl apply -f backend-deployment.yaml
           kubectl apply -f backend-service.yaml
 
-      - name: Wait for LoadBalancer IP
-        run: |
-          echo "Waiting for backend LoadBalancer to be assigned an external IP..."
-          sleep 30  # Give time for IP assignment
-          export BACKEND_IP=$(kubectl get svc backend-ramana -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-          echo "Backend IP is $BACKEND_IP"
-          echo "VITE_BACKEND_URL=http://${BACKEND_IP}:8000" > Frontend/.env
       - name: Apply Kubernetes Manifests
         run: |
           cd manifests
