@@ -74,7 +74,7 @@ jobs:
           echo "VITE_BACKEND_URL=http://${BACKEND_IP}:8000" > Frontend/.env
       - name : apply kubernets for fronetnd
         run: |
-          cd manifests
+          cd  manifests
           kubectl apply -f frontend-deployment.yaml
           kubectl apply -f frontend-service.yaml
       - name: Rollback on Failure
