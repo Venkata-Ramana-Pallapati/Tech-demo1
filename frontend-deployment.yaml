@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: venkat345/my-frontend32:latest
+        image: venkat345/frontend-demo7:latest
         ports:
         - containerPort: 80
         imagePullPolicy: IfNotPresent # or Always

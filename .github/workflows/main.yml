@@ -34,7 +34,7 @@ jobs:
           docker tag frontend-demo7:latest ${{ secrets.DOCKER_USERNAME }}/frontend-demo7:latest
 
       - name: Push frontend Docker Image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}frontend-demo7:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend-demo7:latest
 
 
   deploy-to-aks:
