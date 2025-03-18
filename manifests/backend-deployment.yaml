@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment1
+  name: backend-deployment12
 spec:
   replicas: 1
   selector:
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: venkat345//my-backend:latest
+        image: venkat345//my-backend12:latest
         ports:
         - containerPort: 8000
         imagePullPolicy: IfNotPresent # or Always

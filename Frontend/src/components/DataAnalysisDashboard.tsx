@@ -114,12 +114,12 @@ const TimeseriesPredictionChart: React.FC = () => {
   
     try {
      
-     
-      
-      
-    
 
-      const response = await fetch(`http://172.214.66.99:8000/predict/`, {
+      
+      const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://default-backend-ip:8000";
+      console.log("API Base URL:", API_BASE_URL);    
+      console.log("hello",API_BASE_URL);
+      const response = await fetch(`${API_BASE_URL}/predict/`, { 
         method: "POST",
         body: formData,
       });
