@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment11
+  name: frontend-deployment12
 spec:
   replicas: 1
   selector:
