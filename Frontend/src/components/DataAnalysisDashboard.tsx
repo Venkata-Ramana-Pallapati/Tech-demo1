@@ -116,17 +116,15 @@ const TimeseriesPredictionChart: React.FC = () => {
      
      
       
-<<<<<<< HEAD
+
       const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
       console.log("API Base URL:", API_BASE_URL);    
       console.log("hello",API_BASE_URL);
       const response = await fetch(`${API_BASE_URL}/predict/`, { 
-=======
+
       
     
 
-      const response = await fetch(`http://172.214.66.99:8000/predict/`, {
->>>>>>> parent of dfea3ef6 (change)
         method: "POST",
         body: formData,
       });
