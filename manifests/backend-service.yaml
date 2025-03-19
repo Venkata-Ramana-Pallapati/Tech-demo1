@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-ramana12
+  name: backend-ramana
 spec:
   type: LoadBalancer
   selector:
