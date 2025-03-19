@@ -95,4 +95,4 @@ jobs:
         run: |
           echo "Deployment failed. Rolling back..."
           kubectl rollout undo deployment backend-deployment12 -n default
-          kubectl rollout undo deployment frontend-deployment12 -n default
+          kubectl rollout undo deployment frontend-deployment11 -n default
