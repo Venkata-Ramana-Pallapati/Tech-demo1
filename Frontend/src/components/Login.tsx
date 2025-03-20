@@ -270,9 +270,7 @@ export function Login({ onLogin }: LoginProps) {
           <div className="mt-8 text-center">
             <p className="text-slate-600">
               New to ForecastPro?{' '}
-              <a href="#" className="text-emerald-600 hover:text-emerald-800 transition-colors duration-200">
-                Contact sales
-              </a>
+              
             </p>
           </div>
         </div>
