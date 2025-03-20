@@ -29,10 +29,10 @@ jobs:
       - name: Build frontend Docker Image
         run: |
           cd Frontend  # Change directory to where the Dockerfile is
-          docker build -t frontend-demo123:latest .
-          docker tag frontend-demo123:latest ${{ secrets.DOCKER_USERNAME }}/frontend-demo123:latest
+          docker build -t frontend-demo1234:latest .
+          docker tag frontend-demo1234:latest ${{ secrets.DOCKER_USERNAME }}/frontend-demo1234:latest
       - name: Push frontend Docker Image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend-demo123:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend-demo1234:latest
 
 
   deploy-to-aks:
@@ -95,4 +95,4 @@ jobs:
         run: |
           echo "Deployment failed. Rolling back..."
           kubectl rollout undo deployment backend-deployment123 -n default
-          kubectl rollout undo deployment frontend-deployment113 -n default
+          kubectl rollout undo deployment frontend-deployment114 -n default
