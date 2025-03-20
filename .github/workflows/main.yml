@@ -29,10 +29,10 @@ jobs:
       - name: Build frontend Docker Image
         run: |
           cd Frontend  # Change directory to where the Dockerfile is
-          docker build -t frontend-demo12:latest .
-          docker tag frontend-demo12:latest ${{ secrets.DOCKER_USERNAME }}/frontend-demo12:latest
+          docker build -t frontend-demo123:latest .
+          docker tag frontend-demo123:latest ${{ secrets.DOCKER_USERNAME }}/frontend-demo123:latest
       - name: Push frontend Docker Image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend-demo12:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend-demo123:latest
 
 
   deploy-to-aks:
