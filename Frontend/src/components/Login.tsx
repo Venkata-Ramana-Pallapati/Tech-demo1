@@ -1,19 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, LineChart, BarChart3, PieChart, Zap, BrainCircuit, TimerReset, Target, ChevronRight } from 'lucide-react';
-//import SignupPage from './SignupPage';
-import { PassThrough } from 'stream';
 
 interface LoginProps {
   onLogin: (email: string) => void;
-}
-interface User {
-  name: string;
-  email: string;
-  password: string;
-}
-
-interface UserDict {
-  [email: string]: { name: string; password: string };
 }
 
 export function Login({ onLogin }: LoginProps) {
@@ -21,17 +10,6 @@ export function Login({ onLogin }: LoginProps) {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [animationStep, setAnimationStep] = useState(0);
-  const [users, setUsers] = useState<UserDict>({});
-  const [message, setMessage] = useState('');
-  const [showSignup, setShowSignup] = useState(false);
-
-  useEffect(() => {
-    // Reload page if coming back from signup
-    if (sessionStorage.getItem('justSignedUp')) {
-      sessionStorage.removeItem('justSignedUp');
-      window.location.reload();
-    }
-  }, []);
 
   useEffect(() => {
     // Animation sequence
@@ -41,46 +19,22 @@ export function Login({ onLogin }: LoginProps) {
     
     return () => clearInterval(timer);
   }, []);
-  const userDict: UserDict = {};
-
-  useEffect(() => {
-    const storedUsers = localStorage.getItem("users");
-    console.log("Fetched Users:", storedUsers);
-    if (storedUsers) {
-      const userArray = JSON.parse(storedUsers);
-      userArray.forEach((user: { email: string; name: string; password: string }) => {
-        if (user.email) {
-          userDict[user.email] = { name: user.name, password: user.password };
-        }
-      });
-      setUsers(userDict);
-      console.log("User Dictionary:", userDict); // Debug Line
-    }
-  }, []);
-  
-  console.log(users.email);
 
   const handleSubmit = (e: React.FormEvent) => {
-    if (users[email] && users[email].password === password) {
-      e.preventDefault();
+    e.preventDefault();
+    
+    // Check if email format is valid
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(email) && password.length > 0) {
       setIsLoading(true);
       // Simulate loading
       setTimeout(() => {
         onLogin(email);
       }, 1500);
+    } else {
+      console.log("Invalid email format or empty password");
     }
-    console.log("failed")
   };
-
-  const handleSignup = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent default anchor behavior
-    sessionStorage.setItem('justSignedUp', 'true');
-    setShowSignup(true);
-  };
-
-  if (showSignup) {
-    return <SignupPage />; 
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-900">
@@ -316,7 +270,9 @@ export function Login({ onLogin }: LoginProps) {
           <div className="mt-8 text-center">
             <p className="text-slate-600">
               New to ForecastPro?{' '}
-             
+              <a href="#" className="text-emerald-600 hover:text-emerald-800 transition-colors duration-200">
+                Contact sales
+              </a>
             </p>
           </div>
         </div>
