@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, LineChart, BarChart3, PieChart, Zap, BrainCircuit, TimerReset, Target, ChevronRight } from 'lucide-react';
-import SignupPage from './SignupPage';
+//import SignupPage from './SignupPage';
 import { PassThrough } from 'stream';
 
 interface LoginProps {
@@ -316,9 +316,7 @@ export function Login({ onLogin }: LoginProps) {
           <div className="mt-8 text-center">
             <p className="text-slate-600">
               New to ForecastPro?{' '}
-              <a href=""  onClick={handleSignup}  className="text-emerald-600 hover:text-emerald-800 font-medium transition-colors duration-200">
-                Signup
-              </a>
+             
             </p>
           </div>
         </div>
