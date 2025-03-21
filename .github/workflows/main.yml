@@ -90,9 +90,4 @@ jobs:
           cd manifests
           kubectl apply -f frontend-deployment.yaml
           kubectl apply -f frontend-service.yaml
-      - name: Rollback on Failure
-        if: failure()
-        run: |
-          echo "Deployment failed. Rolling back..."
-          kubectl rollout undo deployment backend-deployment123 -n default
-          kubectl rollout undo deployment frontend-deployment114 -n default
+      
