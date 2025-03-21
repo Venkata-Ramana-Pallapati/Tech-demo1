@@ -17,5 +17,5 @@ spec:
         image: venkat345//my-backend:latest
         ports:
         - containerPort: 8000
-        imagePullPolicy: IfNotPresent # or Always
+        imagePullPolicy: IfNotPresent 
 
