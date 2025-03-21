@@ -26,13 +26,7 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USERNAME }}/my-backend12:latest
 
 
-      - name: Build frontend Docker Image
-        run: |
-          cd Frontend  # Change directory to where the Dockerfile is
-          docker build -t frontend-demo21:latest .
-          docker tag frontend-demo21:latest ${{ secrets.DOCKER_USERNAME }}/frontend-demo21:latest
-      - name: Push frontend Docker Image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend-demo21:latest
+     
 
 
   deploy-to-aks:
@@ -77,10 +71,10 @@ jobs:
       - name:  RE Build frontend Docker Image
         run: |
           cd Frontend  # Change directory to where the Dockerfile is
-          docker build -t frontend-demo12:latest .
-          docker tag frontend-demo12:latest venkat345/frontend-demo12:latest
+          docker build -t frontend-demo22:latest .
+          docker tag frontend-demo22:latest venkat345/frontend-demo22:latest
       - name: Push frontend Docker Image to Docker Hub
-        run: docker push venkat345/frontend-demo12:latest
+        run: docker push venkat345/frontend-demo22:latest
 
 
 
@@ -90,9 +84,4 @@ jobs:
           cd manifests
           kubectl apply -f frontend-deployment.yaml
           kubectl apply -f frontend-service.yaml
-      - name: Rollback on Failure
-        if: failure()
-        run: |
-          echo "Deployment failed. Rolling back..."
-          kubectl rollout undo deployment backend-deployment123 -n default
-          kubectl rollout undo deployment frontend-deployment114 -n default
+     

@@ -268,10 +268,7 @@ export function Login({ onLogin }: LoginProps) {
           </form>
           
           <div className="mt-8 text-center">
-            <p className="text-slate-600">
-              New to ForecastPro?{' '}
-              
-            </p>
+            
           </div>
         </div>
       </div>
