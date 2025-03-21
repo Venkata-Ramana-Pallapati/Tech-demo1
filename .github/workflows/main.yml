@@ -26,7 +26,7 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USERNAME }}/my-backend12:latest
 
 
-     
+    
 
 
   deploy-to-aks:
@@ -71,10 +71,10 @@ jobs:
       - name:  RE Build frontend Docker Image
         run: |
           cd Frontend  # Change directory to where the Dockerfile is
-          docker build -t frontend-demo22:latest .
-          docker tag frontend-demo22:latest venkat345/frontend-demo22:latest
+          docker build -t frontend-demo21:latest .
+          docker tag frontend-demo21:latest venkat345/frontend-demo21:latest
       - name: Push frontend Docker Image to Docker Hub
-        run: docker push venkat345/frontend-demo22:latest
+        run: docker push venkat345/frontend-demo21:latest
 
 
 
@@ -84,8 +84,4 @@ jobs:
           cd manifests
           kubectl apply -f frontend-deployment.yaml
           kubectl apply -f frontend-service.yaml
-<<<<<<< HEAD
-     
-=======
       
->>>>>>> 721c36faf6a286246da64c6f65dd5c2be8faad44
