@@ -6,15 +6,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend2
+      app: frontend3
   template:
     metadata:
       labels:
-        app: frontend2
+        app: frontend3
     spec:
       containers:
       - name: frontend2
-        image: venkat345/frontend-demo21:latest
+        image: venkat345/frontend-demo22:latest
         ports:
         - containerPort: 80
         imagePullPolicy: IfNotPresent # or Always
