@@ -84,4 +84,8 @@ jobs:
           cd manifests
           kubectl apply -f frontend-deployment.yaml
           kubectl apply -f frontend-service.yaml
+<<<<<<< HEAD
      
+=======
+      
+>>>>>>> 721c36faf6a286246da64c6f65dd5c2be8faad44
