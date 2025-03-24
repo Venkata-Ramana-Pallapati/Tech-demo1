@@ -5,7 +5,7 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: frontend3
+    app: frontend2
   ports:
     - protocol: TCP
       port: 81          # Change this to 81

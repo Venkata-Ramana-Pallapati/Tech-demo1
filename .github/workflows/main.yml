@@ -71,10 +71,10 @@ jobs:
       - name:  RE Build frontend Docker Image
         run: |
           cd Frontend  # Change directory to where the Dockerfile is
-          docker build -t frontend-demo21:latest .
-          docker tag frontend-demo21:latest venkat345/frontend-demo21:latest
+          docker build -t frontend-demo22:latest .
+          docker tag frontend-demo22:latest venkat345/frontend-demo22:latest
       - name: Push frontend Docker Image to Docker Hub
-        run: docker push venkat345/frontend-demo21:latest
+        run: docker push venkat345/frontend-demo22:latest
 
 
 

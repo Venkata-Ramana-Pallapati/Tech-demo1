@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, LineChart, BarChart3, PieChart, Zap, BrainCircuit, TimerReset, Target, ChevronRight } from 'lucide-react';
+import { TrendingUp, LineChart, BrainCircuit, TimerReset, Target, Zap } from 'lucide-react';
 
 interface LoginProps {
-  onLogin: (email: string) => void;
+  onLogin: (userData: any) => void;
 }
 
 export function Login({ onLogin }: LoginProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [animationStep, setAnimationStep] = useState(0);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     // Animation sequence
@@ -17,22 +16,90 @@ export function Login({ onLogin }: LoginProps) {
       setAnimationStep(prev => (prev + 1) % 4);
     }, 3000);
     
-    return () => clearInterval(timer);
+    // Load Google API script
+    const loadGoogleScript = () => {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = initializeGoogleLogin;
+      document.body.appendChild(script);
+    };
+    
+    loadGoogleScript();
+    
+    return () => {
+      clearInterval(timer);
+      // Clean up Google button container
+      const googleButtonDiv = document.getElementById('google-signin-button');
+      if (googleButtonDiv) {
+        googleButtonDiv.innerHTML = '';
+      }
+    };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Initialize Google Sign-In
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+  const initializeGoogleLogin = () => {
+    if (window.google && document.getElementById('google-signin-button')) {
+      window.google.accounts.id.initialize({
+        client_id:clientId, // Replace with your actual Google Client ID
+        callback: handleGoogleResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+      
+      window.google.accounts.id.renderButton(
+        document.getElementById('google-signin-button')!,
+        { 
+          type: 'standard', 
+          theme: 'filled_blue',
+          size: 'large',
+          text: 'continue_with',
+          shape: 'pill',
+          width: 280
+        }
+      );
+    }
+  };
+
+  // Handle Google Sign-In response
+  const handleGoogleResponse = (response: any) => {
+    setIsLoading(true);
+    setErrorMessage(''); // Clear any previous errors
     
-    // Check if email format is valid
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.test(email) && password.length > 0) {
-      setIsLoading(true);
-      // Simulate loading
-      setTimeout(() => {
-        onLogin(email);
-      }, 1500);
-    } else {
-      console.log("Invalid email format or empty password");
+    // Get user information from the response credential
+    const credential = response.credential;
+    const decodedToken = parseJwt(credential);
+    
+    if (!decodedToken || !decodedToken.email) {
+      setIsLoading(false);
+      setErrorMessage('Invalid Google credentials. Please try again.');
+      return;
+    }
+    
+    // Process user data
+    setTimeout(() => {
+      setIsLoading(false);
+      // Pass user data to parent component for authentication
+      onLogin({
+        email: decodedToken.email,
+        name: decodedToken.name,
+        picture: decodedToken.picture,
+        googleId: decodedToken.sub,
+        // Add any other relevant user information
+        authMethod: 'google'
+      });
+    }, 1000);
+  };
+
+  // Parse JWT token
+  const parseJwt = (token: string) => {
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+      return null;
     }
   };
 
@@ -130,7 +197,7 @@ export function Login({ onLogin }: LoginProps) {
       {/* Main content */}
       <div className="relative w-full max-w-5xl mx-4 flex flex-col md:flex-row rounded-2xl overflow-hidden shadow-2xl bg-slate-800">
         {/* Left panel - Visual identity */}
-        <div className="w-full md:w-2/5 bg-gradient-to-br from-slate-800 to-slate-950 p-8 relative overflow-hidden">
+        <div className="w-full md:w-1/2 bg-gradient-to-br from-slate-800 to-slate-950 p-8 relative overflow-hidden">
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-2xl" />
           <div className="absolute bottom-10 -left-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-2xl" />
           
@@ -197,81 +264,67 @@ export function Login({ onLogin }: LoginProps) {
         </div>
         
         {/* Right panel - Login form */}
-        <div className="w-full md:w-3/5 bg-white p-8 md:p-12">
-          <div className="mb-10">
-            <h2 className="text-3xl font-bold text-slate-800 mb-2">Welcome Back</h2>
-            <p className="text-slate-500">Access your predictive analytics dashboard</p>
+        <div className="w-full md:w-1/2 bg-gradient-to-br from-white to-cyan-50 p-8 md:p-12 flex flex-col justify-center">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-slate-800 mb-3">Welcome to ForecastPro</h2>
+            <div className="h-1 w-20 bg-gradient-to-r from-emerald-400 to-cyan-400 mx-auto rounded-full mb-4"></div>
+            <p className="text-slate-600">Access your predictive analytics dashboard</p>
           </div>
           
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
-                placeholder="forecaster@company.com"
-                required
-              />
+          {/* Error message display */}
+          {errorMessage && (
+            <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+              {errorMessage}
             </div>
-            
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium text-slate-700">Password</label>
-                <a href="#" className="text-sm text-emerald-600 hover:text-emerald-800 transition-colors duration-200">
-                  Forgot password?
-                </a>
-              </div>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-            
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-slate-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-700">
-                Keep me signed in
-              </label>
-            </div>
-            
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full flex items-center justify-center bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-300 text-lg font-medium"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Analyzing...
-                </span>
-              ) : (
-                <span className="flex items-center">
-                  View Predictions
-                  <ChevronRight className="ml-1 h-5 w-5" />
-                </span>
-              )}
-            </button>
-          </form>
+          )}
           
-          <div className="mt-8 text-center">
+          {/* Loading indicator */}
+          {isLoading && (
+            <div className="mb-6 flex justify-center">
+              <div className="w-12 h-12 rounded-full border-4 border-slate-100 border-t-emerald-500 animate-spin"></div>
+            </div>
+          )}
+          
+          {/* Google Sign-In Card */}
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-8 transform hover:scale-105 transition-transform duration-300">
+            <div className="flex items-center justify-center mb-5">
+              <div className="w-12 h-12 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                </svg>
+              </div>
+            </div>
+            <h3 className="text-xl font-semibold text-center text-slate-800 mb-1">One-Click Access</h3>
+            <p className="text-center text-slate-600 mb-6">Sign in securely with your Google account</p>
             
+            {/* Google Sign-In Button Container */}
+            <div id="google-signin-button" className="flex justify-center"></div>
+          </div>
+          
+          {/* Additional colorful elements */}
+          <div className="flex justify-center space-x-4 mt-auto">
+            <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
+            <div className="w-3 h-3 rounded-full bg-cyan-400"></div>
+            <div className="w-3 h-3 rounded-full bg-indigo-400"></div>
+            <div className="w-3 h-3 rounded-full bg-purple-400"></div>
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+// Add Google OAuth type to the global Window interface
+declare global {
+  interface Window {
+    google: {
+      accounts: {
+        id: {
+          initialize: (config: any) => void;
+          renderButton: (element: HTMLElement, options: any) => void;
+          prompt: () => void;
+        }
+      }
+    }
+  }
 }

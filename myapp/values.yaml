@@ -1,0 +1,19 @@
+replicaCount: 1
+
+image:
+  repository: venkat345/frontend-demo21
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+
+# ✅ Add this section to avoid the error
+serviceAccount:
+  create: true  # Set to false if you don't want Helm to create a ServiceAccount
+  automount: true
+  annotations: {}
