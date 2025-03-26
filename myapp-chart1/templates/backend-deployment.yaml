@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment123
+  name: backend
 spec:
-  replicas: 1
+  replicas: {{ .Values.backend.replicas }}
   selector:
     matchLabels:
       app: backend
@@ -14,8 +14,6 @@ spec:
     spec:
       containers:
       - name: backend
-        image: venkat345//my-backend:latest
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
         ports:
         - containerPort: 8000
-        imagePullPolicy: IfNotPresent 
-

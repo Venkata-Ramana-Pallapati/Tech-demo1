@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-demo35
+  name: frontend-demo36
 spec:
   type: LoadBalancer
   selector:
     app: frontend3
   ports:
     - protocol: TCP
-      port: 81          # Change this to 81
-      targetPort: 80    # This should match the container's port
+      port: 80           # Change this to 80
+      targetPort: 80     # Ensure your container is also exposing this port

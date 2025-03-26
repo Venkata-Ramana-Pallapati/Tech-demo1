@@ -1,0 +1,25 @@
+backend:
+  image: 
+    repository: venkat345/final-backend
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 8000
+  replicas: 2
+
+frontend:
+  image: 
+    repository: venkat345/final-frontend
+    tag: latest
+  service:
+    type: LoadBalancer
+    port: 80
+  replicas: 2
+
+serviceAccount:
+  create: false
+
+ingress:
+  enabled: false
+autoscaling:
+  enabled: false

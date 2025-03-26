@@ -1,13 +1,13 @@
-name: Deploy Backend to AKS
+name: CI/CD with Helm for AKS
 
 on:
   push:
     branches:
-      - main  # Change this if needed
+      - main  # Change if needed
 
 jobs:
   build-and-push:
-    name: Build and Push Backend
+    name: Build and Push Docker Images
     runs-on: ubuntu-latest
 
     steps:
@@ -17,25 +17,25 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build Backend Docker Image
+      - name: Build & Push Backend Image
         run: |
-          cd Demo  # Change directory to where the Dockerfile is
-          docker build -t my-backend12:latest .
-          docker tag my-backend12:latest ${{ secrets.DOCKER_USERNAME }}/my-backend12:latest
-      - name: Push Backend Docker Image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/my-backend12:latest
+          cd Demo  # Navigate to backend directory
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-backend12:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/my-backend12:latest
 
-
-    
-
+      - name: Build & Push Frontend Image
+        run: |
+          cd Frontend  # Navigate to frontend directory
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend-demo23:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/frontend-demo23:latest
 
   deploy-to-aks:
-    name: Deploy to AKS
+    name: Deploy to AKS using Helm
     needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Log in to Azure
@@ -46,42 +46,23 @@ jobs:
       - name: Get AKS Credentials
         run: |
           az aks get-credentials --resource-group ${{ secrets.AZURE_RG }} --name ${{ secrets.AKS_CLUSTER }}
-      - name: Create Namespace if not exists
-        run: |
-          kubectl get namespace frontend || kubectl create namespace frontend
-      - name: Apply Kubernetes Manifests
-        run: |
-          cd manifests
-          kubectl apply -f backend-deployment.yaml
-          kubectl apply -f backend-service.yaml
-      - name: Wait for LoadBalancer IP
-        run: |
-          echo "Waiting for backend LoadBalancer to be assigned an external IP..."
-          sleep 30  # Allow time for IP assignment
-          # Get the correct external IP
-          export BACKEND_IP=$(kubectl get svc backend-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-          echo "Backend IP is $BACKEND_IP"
-          # Ensure it is correctly stored in the Frontend .env file
-          echo "VITE_BACKEND_URL=http://$BACKEND_IP:8000" > Frontend/.env
-          cat Frontend/.env  # Debugging step to verify the value
-      - name:  again Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
 
-      - name:  RE Build frontend Docker Image
+      - name: Create Namespace if Not Exists
         run: |
-          cd Frontend  # Change directory to where the Dockerfile is
-          docker build -t frontend-demo22:latest .
-          docker tag frontend-demo22:latest venkat345/frontend-demo22:latest
-      - name: Push frontend Docker Image to Docker Hub
-        run: docker push venkat345/frontend-demo22:latest
+          kubectl get namespace app-namespace || kubectl create namespace app-namespace
 
-
-
-      
-      - name : apply kubernets for fronetnd
+      - name: Deploy Backend & Frontend using Helm (`myapp-chart1`)
         run: |
-          cd manifests
-          kubectl apply -f frontend-deployment.yaml
-          kubectl apply -f frontend-service.yaml
-      
+          helm upgrade --install myapp-release ./myapp-chart1  --force
+            
+
+      - name: Rollback on Failure
+        if: failure()
+        run: |
+          echo "Deployment failed. Rolling back..."
+          helm rollback myapp-release || echo "No previous revision found."

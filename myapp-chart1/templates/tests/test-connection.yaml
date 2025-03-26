@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "myapp-chart1.fullname" . }}-test-connection"
+  labels:
+    {{- include "myapp-chart1.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget-backend
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "myapp-chart1.fullname" . }}:{{ .Values.backend.service.port }}']
+
+    - name: wget-frontend
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "myapp-chart1.fullname" . }}:{{ .Values.frontend.service.port }}']
+      
+  restartPolicy: Never
