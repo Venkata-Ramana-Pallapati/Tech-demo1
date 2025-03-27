@@ -5,13 +5,13 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 // Firebase configuration - replace with your own Firebase project config
 const firebaseConfig = {
-  apiKey: "AIzaSyBPCK3sG9GhLnJ1HL4sPWmHx5g76dSt_lY",
-  authDomain: "forecasting-85368.firebaseapp.com",
-  projectId: "forecasting-85368",
-  storageBucket: "forecasting-85368.firebasestorage.app",
-  messagingSenderId: "960819872386",
-  appId: "1:960819872386:web:aecb9d1943137a9213aa9b",
-  measurementId: "G-K89P0R8CR7"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
