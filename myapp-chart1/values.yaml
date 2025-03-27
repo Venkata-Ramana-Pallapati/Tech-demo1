@@ -3,7 +3,8 @@ backend:
     repository: venkat345/final-backend
     tag: latest
   service:
-    type: ClusterIP
+    type: LoadBalancer
+  
     port: 8000
   replicas: 2
 
