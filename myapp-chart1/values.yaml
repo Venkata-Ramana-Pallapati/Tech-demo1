@@ -9,7 +9,7 @@ backend:
 
 frontend:
   image: 
-    repository: venkat345/final-frontend
+    repository: venkat345/googleaut-frontend:latest
     tag: latest
   service:
     type: LoadBalancer

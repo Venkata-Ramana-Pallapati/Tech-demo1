@@ -1,5 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, LineChart, BrainCircuit, TimerReset, Target, Zap } from 'lucide-react';
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+
+// Firebase configuration - replace with your own Firebase project config
+const firebaseConfig = {
+  apiKey: "AIzaSyBPCK3sG9GhLnJ1HL4sPWmHx5g76dSt_lY",
+  authDomain: "forecasting-85368.firebaseapp.com",
+  projectId: "forecasting-85368",
+  storageBucket: "forecasting-85368.firebasestorage.app",
+  messagingSenderId: "960819872386",
+  appId: "1:960819872386:web:aecb9d1943137a9213aa9b",
+  measurementId: "G-K89P0R8CR7"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 
 interface LoginProps {
   onLogin: (userData: any) => void;
@@ -16,90 +34,51 @@ export function Login({ onLogin }: LoginProps) {
       setAnimationStep(prev => (prev + 1) % 4);
     }, 3000);
     
-    // Load Google API script
-    const loadGoogleScript = () => {
-      const script = document.createElement('script');
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.onload = initializeGoogleLogin;
-      document.body.appendChild(script);
-    };
-    
-    loadGoogleScript();
-    
     return () => {
       clearInterval(timer);
-      // Clean up Google button container
-      const googleButtonDiv = document.getElementById('google-signin-button');
-      if (googleButtonDiv) {
-        googleButtonDiv.innerHTML = '';
-      }
     };
   }, []);
 
-  // Initialize Google Sign-In
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-
-  const initializeGoogleLogin = () => {
-    if (window.google && document.getElementById('google-signin-button')) {
-      window.google.accounts.id.initialize({
-        client_id:clientId, // Replace with your actual Google Client ID
-        callback: handleGoogleResponse,
-        auto_select: false,
-        cancel_on_tap_outside: true,
-      });
-      
-      window.google.accounts.id.renderButton(
-        document.getElementById('google-signin-button')!,
-        { 
-          type: 'standard', 
-          theme: 'filled_blue',
-          size: 'large',
-          text: 'continue_with',
-          shape: 'pill',
-          width: 280
-        }
-      );
-    }
-  };
-
-  // Handle Google Sign-In response
-  const handleGoogleResponse = (response: any) => {
+  // Handle Firebase Google Sign-In
+  const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setErrorMessage(''); // Clear any previous errors
     
-    // Get user information from the response credential
-    const credential = response.credential;
-    const decodedToken = parseJwt(credential);
-    
-    if (!decodedToken || !decodedToken.email) {
-      setIsLoading(false);
-      setErrorMessage('Invalid Google credentials. Please try again.');
-      return;
-    }
-    
-    // Process user data
-    setTimeout(() => {
-      setIsLoading(false);
-      // Pass user data to parent component for authentication
-      onLogin({
-        email: decodedToken.email,
-        name: decodedToken.name,
-        picture: decodedToken.picture,
-        googleId: decodedToken.sub,
-        // Add any other relevant user information
-        authMethod: 'google'
-      });
-    }, 1000);
-  };
-
-  // Parse JWT token
-  const parseJwt = (token: string) => {
     try {
-      return JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
-      return null;
+      // Trigger Google Sign-In popup
+      const result = await signInWithPopup(auth, googleProvider);
+      
+      // Get user credentials
+      const user = result.user;
+      
+      // Wait a moment to simulate loading
+      setTimeout(() => {
+        setIsLoading(false);
+        // Pass user data to parent component for authentication
+        onLogin({
+          email: user.email,
+          name: user.displayName,
+          picture: user.photoURL,
+          googleId: user.uid,
+          authMethod: 'google'
+        });
+      }, 1000);
+    } catch (error: any) {
+      setIsLoading(false);
+      // Handle specific error types
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      
+      console.error('Google Sign-In Error:', errorCode, errorMessage);
+      
+      // User-friendly error messages
+      if (errorCode === 'auth/popup-closed-by-user') {
+        setErrorMessage('Sign-in cancelled. Please try again.');
+      } else if (errorCode === 'auth/network-request-failed') {
+        setErrorMessage('Network error. Please check your connection.');
+      } else {
+        setErrorMessage('Authentication failed. Please try again.');
+      }
     }
   };
 
@@ -297,8 +276,20 @@ export function Login({ onLogin }: LoginProps) {
             <h3 className="text-xl font-semibold text-center text-slate-800 mb-1">One-Click Access</h3>
             <p className="text-center text-slate-600 mb-6">Sign in securely with your Google account</p>
             
-            {/* Google Sign-In Button Container */}
-            <div id="google-signin-button" className="flex justify-center"></div>
+            {/* Google Sign-In Button */}
+            <div className="flex justify-center">
+              <button 
+                onClick={handleGoogleSignIn}
+                className="bg-white border border-gray-300 rounded-lg px-4 py-2 flex items-center justify-center hover:bg-gray-50 transition duration-300 w-full"
+              >
+                <img 
+                  src="https://www.svgrepo.com/show/475656/google-color.svg" 
+                  alt="Google logo" 
+                  className="w-6 h-6 mr-2" 
+                />
+                Continue with Google
+              </button>
+            </div>
           </div>
           
           {/* Additional colorful elements */}
@@ -312,19 +303,4 @@ export function Login({ onLogin }: LoginProps) {
       </div>
     </div>
   );
-}
-
-// Add Google OAuth type to the global Window interface
-declare global {
-  interface Window {
-    google: {
-      accounts: {
-        id: {
-          initialize: (config: any) => void;
-          renderButton: (element: HTMLElement, options: any) => void;
-          prompt: () => void;
-        }
-      }
-    }
-  }
 }
