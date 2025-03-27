@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: frontend-helm
 spec:
   replicas: {{ .Values.frontend.replicas }}
   selector:
     matchLabels:
-      app: frontend
+      app: frontend56
   template:
     metadata:
       labels:
-        app: frontend
+        app: frontend56
     spec:
       containers:
-      - name: frontend
+      - name: frontend56
         image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
         ports:
         - containerPort: 80

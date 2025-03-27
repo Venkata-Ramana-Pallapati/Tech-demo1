@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  name: frontend-deployment45
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: frontend45
   template:
     metadata:
       labels:
-        app: frontend
+        app: frontend45
     spec:
       containers:
-      - name: frontend
-        image: venkat345/frontend-demo7:latest
+      - name: frontend45
+        image: venkat345/googleaut-frontend:latest
         ports:
         - containerPort: 80
         imagePullPolicy: IfNotPresent # or Always

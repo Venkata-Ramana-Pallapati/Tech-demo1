@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: frontend-helm
 spec:
   selector:
-    app: frontend
+    app: frontend56
   ports:
     - protocol: TCP
       port: {{ .Values.frontend.service.port }}
