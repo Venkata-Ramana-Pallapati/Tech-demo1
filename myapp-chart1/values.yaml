@@ -1,6 +1,6 @@
 backend:
   image: 
-    repository: venkat345/final-backend
+    repository: venkat345/backend-service1
     tag: latest
   service:
     type: LoadBalancer
@@ -10,8 +10,8 @@ backend:
 
 frontend:
   image: 
-    repository: venkat345/googleaut-frontend:latest
-    tag: latest
+    repository: venkat345/googleaut-frontend
+    tag: latest          
   service:
     type: LoadBalancer
     port: 80

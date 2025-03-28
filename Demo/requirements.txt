@@ -7,3 +7,4 @@ prophet==1.1.5
 cmdstanpy
 statsmodels==0.14.0
 python-multipart
+firebase-admin
