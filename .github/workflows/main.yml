@@ -20,14 +20,14 @@ jobs:
       - name: Build & Push Backend Image
         run: |
           cd Demo  # Navigate to backend directory
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-backend12:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/my-backend12:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/backend-service1 .
+          docker push ${{ secrets.DOCKER_USERNAME }}/backend-service1
 
       - name: Build & Push Frontend Image
         run: |
           cd Frontend  # Navigate to frontend directory
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend-demo23:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/frontend-demo23:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/googleaut-frontend .
+          docker push ${{ secrets.DOCKER_USERNAME }}/googleaut-frontend
 
   deploy-to-aks:
     name: Deploy to AKS using Helm
@@ -54,6 +54,9 @@ jobs:
 
      
       - name: Deploy Backend & Frontend using Helm (`myapp-chart1`)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
         run: |
           helm upgrade --install my-app ./myapp-chart1 --force
 
