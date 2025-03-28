@@ -53,12 +53,15 @@ jobs:
           version: 'latest'
 
       - name: Deploy Backend & Frontend using Helm (`myapp-chart1`)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           helm upgrade --install my-app ./myapp-chart1 --force --wait --timeout 300s
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      
+      - name: Verify Deployment
+        run: |
+          kubectl get pods -n default
+          kubectl get services -n default
 
       - name: Rollback on Failure
         if: failure()
