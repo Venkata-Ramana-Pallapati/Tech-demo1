@@ -120,10 +120,11 @@ const TimeseriesPredictionChart: React.FC = () => {
       console.log("API Base URL:", API_BASE_URL);    
       console.log("hello",API_BASE_URL);
       const response = await fetch(`${API_BASE_URL}/predict/`, { 
-
+      
+         
       
     
-
+ 
         method: "POST",
         body: formData,
       });

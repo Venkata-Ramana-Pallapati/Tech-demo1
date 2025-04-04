@@ -17,6 +17,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
 const googleProvider = new GoogleAuthProvider();
 
 interface LoginProps {
@@ -50,7 +51,8 @@ export function Login({ onLogin }: LoginProps) {
       
       // Get user credentials
       const user = result.user;
-      
+      const idToken = await user.getIdToken();
+      console.log("token",idToken);
       // Wait a moment to simulate loading
       setTimeout(() => {
         setIsLoading(false);
@@ -60,7 +62,9 @@ export function Login({ onLogin }: LoginProps) {
           name: user.displayName,
           picture: user.photoURL,
           googleId: user.uid,
-          authMethod: 'google'
+          authMethod: 'google',
+          token: `Bearer ${idToken}` // This is the token you're looking for
+
         });
       }, 1000);
     } catch (error: any) {

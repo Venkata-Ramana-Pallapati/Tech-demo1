@@ -15,20 +15,10 @@ from typing import Dict, Optional
 import numpy as np
 from pydantic import BaseModel
 
-from firebase_admin import credentials, initialize_app
-
-# Get the path from an environment variable
-firebase_json_path = os.getenv("FIREBASE_CREDENTIALS_PATH", "/app/firebase-service-account.json")
-
-if not os.path.exists(firebase_json_path):
-    raise ValueError(f"Firebase credentials not found at {firebase_json_path}")
-
-cred = credentials.Certificate(firebase_json_path)
-initialize_app(cred)
-
-
-
-
+# Initialize Firebase Admin SDK
+# Ensure you have the path to your Firebase service account key
+cred = credentials.Certificate('/home/sigmoid/Pictures/project_root /Demo/firebase-service-account.json')
+firebase_admin.initialize_app(cred)
 
 app = FastAPI(title="ForecastPro API", description="Predictive Analytics API")
 
@@ -49,7 +39,9 @@ def verify_firebase_token(credentials: HTTPAuthorizationCredentials = Depends(se
     try:
         # Verify the Firebase ID token
         decoded_token = auth.verify_id_token(credentials.credentials)
+        print(decoded_token)
         return decoded_token
+    
     except Exception as e:
         raise HTTPException(
             status_code=403, 
@@ -188,4 +180,3 @@ async def predict(
         # Detailed error logging
         print(f"Prediction error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-
